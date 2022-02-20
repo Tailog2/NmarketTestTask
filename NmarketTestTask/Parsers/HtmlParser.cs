@@ -16,10 +16,22 @@ namespace NmarketTestTask.Parsers
             houses = new List<House>();
 
             var doc = new HtmlDocument();
-            doc.Load(path, Encoding.GetEncoding("windows-1251"), false);
+            try
+            {
+                doc.Load(path, Encoding.GetEncoding("windows-1251"), false);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Error during the file loading");
+            }
+            
 
             // Извлекает таблицу с данными без заголовков
             var tableData = doc.DocumentNode.SelectSingleNode("//tbody").SelectNodes(".//tr");
+
+            if (tableData.Count == 0)
+                throw new Exception("The program was not able to find any houses in the html file");
+
             ProcessRows(tableData);
 
             return houses;

@@ -16,11 +16,22 @@ namespace NmarketTestTask.Parsers
         {
             houses = new List<House>();
 
-            var workbook = new XLWorkbook(path);
-            sheet = workbook.Worksheets.First();
+            try
+            {
+                var workbook = new XLWorkbook(path);
+                sheet = workbook.Worksheets.First();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Error during the file loading");
+            }                
 
             // Извлекает ячейки с именами домов
-            var housesInSheet = sheet.Cells().Where(c => c.GetValue<string>().Contains("Дом")).ToList();       
+            var housesInSheet = sheet.Cells().Where(c => c.GetValue<string>().Contains("Дом")).ToList();
+
+            if (housesInSheet.Count == 0)
+                throw new Exception("The program was not able to find any houses in the table");
+
             AddHouses(housesInSheet);
 
             return houses;
